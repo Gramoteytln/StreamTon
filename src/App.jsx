@@ -210,6 +210,11 @@ export default function App() {
   const [swipedThreadId, setSwipedThreadId] = useState(null);
   const [isLive] = useState(true);
   const [isJoined, setIsJoined] = useState(false);
+  const [streamSetupOpen, setStreamSetupOpen] = useState(false);
+  const [streamName, setStreamName] = useState("");
+  const [streamNickname, setStreamNickname] = useState("");
+  const [streamAvatar, setStreamAvatar] = useState("");
+  const [countdown, setCountdown] = useState(null);
   const [message, setMessage] = useState("");
   const [likes, setLikes] = useState(8300);
   const [displayLikes, setDisplayLikes] = useState(8300);
@@ -679,17 +684,19 @@ const handleMarkThreadRead = (threadId) => {
   };
 
   const handleContainerClick = () => {
-    if (screen !== "home") return;
-    if (!isJoined && isLive) {
-      setIsJoined(true);
-      return;
-    }
-    if (isJoined && !isGiftOpen && !isInviteOpen && !isDonorsOpen && !isProfileCardOpen) {
-      const burst = getBurstCount();
-      setLikes((p) => p + burst);
-      spawnFlyingLike(burst);
-    }
-  };
+  if (screen !== "home") return;
+
+  if (!isJoined && isLive) {
+    setStreamSetupOpen(true);
+    return;
+  }
+
+  if (isJoined && !isGiftOpen && !isInviteOpen && !isDonorsOpen && !isProfileCardOpen) {
+    const burst = getBurstCount();
+    setLikes((p) => p + burst);
+    spawnFlyingLike(burst);
+  }
+};
 
   const handleCloseLive = (e) => {
     e.stopPropagation();
@@ -1160,13 +1167,97 @@ const renderMessagesScreen = () => (
       </div>
     </div>
   );
+const handleAvatarUpload = (e) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
 
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    setStreamAvatar(reader.result);
+  };
+  reader.readAsDataURL(file);
+};
+
+const handleStartStream = (e) => {
+  e.stopPropagation();
+
+  if (!streamName.trim() || !streamNickname.trim()) {
+    alert("Заполни имя и никнейм");
+    return;
+  }
+
+  setStreamSetupOpen(false);
+  setCountdown(3);
+
+  setTimeout(() => setCountdown(2), 1000);
+  setTimeout(() => setCountdown(1), 2000);
+  setTimeout(() => {
+    setCountdown(null);
+    setIsJoined(true);
+  }, 3000);
+};
   return (
     <div style={container} onClick={handleContainerClick}>
       <style>{globalStyles}</style>
 
       <video ref={videoRef} autoPlay playsInline muted style={{ ...video, opacity: screen === "home" ? 1 : 0 }} />
+{streamSetupOpen && (
+  <>
+    <div style={streamSetupOverlay} onClick={(e) => e.stopPropagation()} />
+    <div style={streamSetupModal} onClick={(e) => e.stopPropagation()}>
+      <div style={streamSetupTitle}>Запуск эфира</div>
+      <div style={streamSetupSubtitle}>Заполни данные стримера</div>
 
+      <label style={streamAvatarUpload}>
+        <div
+  style={{
+    ...streamAvatarPreview,
+    backgroundImage: streamAvatar ? `url(${streamAvatar})` : "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 28,
+    color: "white",
+    backgroundColor: streamAvatar ? "transparent" : "rgba(255,255,255,0.08)"
+  }}
+>
+  {!streamAvatar && "+"}
+</div>
+        <span>Загрузить фото</span>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleAvatarUpload}
+          style={{ display: "none" }}
+        />
+      </label>
+
+      <input
+        style={streamSetupInput}
+        value={streamName}
+        onChange={(e) => setStreamName(e.target.value)}
+        placeholder="Имя"
+      />
+
+      <input
+        style={streamSetupInput}
+        value={streamNickname}
+        onChange={(e) => setStreamNickname(e.target.value)}
+        placeholder="Никнейм"
+      />
+
+      <button style={streamStartBtn} onClick={handleStartStream}>
+        Запустить эфир
+      </button>
+    </div>
+  </>
+)}
+
+{countdown !== null && (
+  <div style={countdownOverlay} onClick={(e) => e.stopPropagation()}>
+    {countdown}
+  </div>
+)}
       {screen === "home" && (
         <>
           {!isJoined ? (
@@ -1185,20 +1276,40 @@ const renderMessagesScreen = () => (
               <div style={liveHeader}>
                 <div style={authorBar} onClick={(e) => e.stopPropagation()}>
                   <div style={authorLeft}>
-                    <button style={clearIconBtn} onClick={handleOpenProfileCard}><div style={authorAvatar} /></button>
-                    <button style={clearMetaBtn} onClick={handleOpenProfileCard}>
-                      <div style={authorMeta}>
-                        <div style={authorName}>TOLYANYCH</div>
-                        <div style={authorStats}><FaHeart style={{ fontSize: 9 }} /><span>{formatLikes(displayLikes)}</span></div>
-                      </div>
-                    </button>
-                    <button style={subscribeBtn} onClick={handleSubscribe}>{isSubscribed ? "Подписан" : "Подписаться"}</button>
-                    {invitedUsers.length > 0 && (
-                      <div style={invitedAvatarsRow}>
-                        {invitedUsers.slice(0, 3).map((u) => <div key={u.id} style={miniInvitedAvatar}>{u.name.slice(0, 1)}</div>)}
-                      </div>
-                    )}
-                  </div>
+  <button style={clearIconBtn} onClick={handleOpenProfileCard}>
+    {streamAvatar ? (
+  <img
+    src={streamAvatar}
+    alt="avatar"
+    style={authorAvatar}
+  />
+) : (
+  <div style={{ ...authorAvatar, background: ACCENT }} />
+)}
+  </button>
+
+  <button style={clearMetaBtn} onClick={handleOpenProfileCard}>
+    <div style={authorMeta}>
+      <div style={authorName}>{streamName}</div>
+      <div style={authorStats}>
+        <FaHeart style={{ fontSize: 9 }} />
+        <span>{formatLikes(displayLikes)}</span>
+      </div>
+    </div>
+  </button>
+
+  <button style={subscribeBtn} onClick={handleSubscribe}>
+    {isSubscribed ? "Подписан" : "Подписаться"}
+  </button>
+
+  {invitedUsers.length > 0 && (
+    <div style={invitedAvatarsRow}>
+      {invitedUsers.slice(0, 3).map((u) => (
+        <div key={u.id} style={miniInvitedAvatar}>{u.name.slice(0, 1)}</div>
+      ))}
+    </div>
+  )}
+</div>
                   <div style={authorRight}>
                     <div style={liveInfoPill}><span style={liveText}>LIVE</span><span style={viewerCount}><FaEye style={{ marginRight: 4 }} /> 12.4K</span></div>
                     <div style={rightToolsColumn}>
@@ -1264,9 +1375,10 @@ const renderMessagesScreen = () => (
                   <div style={centerOverlay} onClick={() => setIsProfileCardOpen(false)} />
                   <div style={profileCardCentered} onClick={(e) => e.stopPropagation()}>
                     <button style={profileCardCloseCentered} onClick={() => setIsProfileCardOpen(false)}><FaTimes /></button>
-                    <div style={{ display: "flex", justifyContent: "center", marginTop: 10 }}><div style={profileCardAvatarBig}>{quickProfileCard.initials}</div></div>
-                    <div style={profileCardNameBig}>{quickProfileCard.name}</div>
-                    <div style={profileCardUsernameBig}>{quickProfileCard.username}</div>
+                    <div style={{ display: "flex", justifyContent: "center", marginTop: 10 }}>
+                    <div style={profileCardAvatarBig}>{quickProfileCard.initials}</div></div>
+                    <div style={profileCardNameBig}>{streamName}</div>
+                    <div style={profileCardUsernameBig}>{streamNickname}</div>
                     <div style={profileCardLivePill}><FaCircle style={{ fontSize: 6, color: "#ff4d6d" }} /> Сейчас в эфире</div>
                     <div style={profileCardStatsCompact}>
                       <div style={profileCardCompactItem}><FaUser style={profileCardCompactIcon} /><div style={profileCardCompactValue}>{quickProfileCard.followers}</div><div style={profileCardCompactLabel}>Подписчики</div></div>
@@ -1402,7 +1514,7 @@ const authorRight = { display: "flex", alignItems: "flex-start", gap: 8, flexShr
 const rightToolsColumn = { display: "flex", flexDirection: "column", alignItems: "center", gap: 8 };
 const clearIconBtn = { background: "none", border: "none", padding: 0, cursor: "pointer" };
 const clearMetaBtn = { background: "none", border: "none", padding: 0, textAlign: "left", cursor: "pointer" };
-const authorAvatar = { width: 28, height: 28, borderRadius: "50%", backgroundImage: "url('/avatar.jpg')", backgroundSize: "cover", backgroundPosition: "center" };
+const authorAvatar = { width: 28, height: 28, borderRadius: "50%", objectFit: "cover", display: "block" };
 const authorMeta = { display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", minWidth: 0, marginLeft: 0 };
 const authorName = { color: "white", fontSize: 11, fontWeight: 700, lineHeight: 1, whiteSpace: "nowrap", margin: 0, padding: 0 };
 const authorStats = { marginTop: 2, display: "flex", alignItems: "center", gap: 4, color: "rgba(255,255,255,0.9)", fontSize: 9, fontWeight: 600, lineHeight: 1 };
@@ -1782,3 +1894,95 @@ const profileCardCompactIcon = { color: "rgba(255,255,255,0.5)", fontSize: 14, m
 const profileCardCompactValue = { color: "white", fontSize: 14, fontWeight: 800 };
 const profileCardCompactLabel = { marginTop: 4, color: "rgba(255,255,255,0.4)", fontSize: 10 };
 const profileCardBtn = { marginTop: 20, width: "100%", height: 44, border: "none", borderRadius: 14, background: "linear-gradient(90deg, #6a57ff, #42cbf4)", color: "white", fontSize: 14, fontWeight: 800, cursor: "pointer" };
+const streamSetupOverlay = {
+  position: "absolute",
+  inset: 0,
+  background: "rgba(0,0,0,0.58)",
+  zIndex: 120
+};
+
+const streamSetupModal = {
+  position: "absolute",
+  left: "50%",
+  top: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 310,
+  padding: 18,
+  borderRadius: 22,
+  background: "rgba(18, 20, 28, 0.97)",
+  border: "1px solid rgba(255,255,255,0.08)",
+  boxShadow: "0 18px 50px rgba(0,0,0,0.45)",
+  zIndex: 121,
+  display: "flex",
+  flexDirection: "column",
+  gap: 12,
+  boxSizing: "border-box"
+};
+
+const streamSetupTitle = {
+  color: "white",
+  fontSize: 20,
+  fontWeight: 800,
+  textAlign: "center"
+};
+
+const streamSetupSubtitle = {
+  color: "rgba(255,255,255,0.62)",
+  fontSize: 12,
+  textAlign: "center"
+};
+
+const streamAvatarUpload = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: 8,
+  color: "white",
+  fontSize: 12,
+  fontWeight: 700,
+  cursor: "pointer"
+};
+
+const streamAvatarPreview = {
+  width: 78,
+  height: 78,
+  borderRadius: "50%",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  border: "2px solid rgba(255,255,255,0.22)"
+};
+
+const streamSetupInput = {
+  height: 42,
+  borderRadius: 14,
+  border: "1px solid rgba(255,255,255,0.12)",
+  background: "rgba(255,255,255,0.08)",
+  color: "white",
+  padding: "0 14px",
+  outline: "none",
+  fontSize: 14
+};
+
+const streamStartBtn = {
+  height: 44,
+  border: "none",
+  borderRadius: 16,
+  background: ACCENT,
+  color: "white",
+  fontSize: 14,
+  fontWeight: 800,
+  cursor: "pointer"
+};
+
+const countdownOverlay = {
+  position: "absolute",
+  inset: 0,
+  background: "rgba(0,0,0,0.55)",
+  color: "white",
+  zIndex: 130,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: 92,
+  fontWeight: 900
+};
