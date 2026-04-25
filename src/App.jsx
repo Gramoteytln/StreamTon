@@ -1244,12 +1244,21 @@ const handleStartStream = (e) => {
         placeholder="Имя"
       />
 
-      <input
-        style={streamSetupInput}
-        value={streamNickname}
-        onChange={(e) => setStreamNickname(e.target.value)}
-        placeholder="Никнейм"
-      />
+     <input
+  style={streamSetupInput}
+  value={streamNickname}
+  onChange={(e) => {
+    let val = e.target.value;
+
+    // если пользователь удалил @ — возвращаем
+    if (!val.startsWith("@")) {
+      val = "@" + val.replace(/@/g, "");
+    }
+
+    setStreamNickname(val);
+  }}
+  placeholder="@никнейм"
+/>
 
       <button style={streamStartBtn} onClick={handleStartStream}>
         Запустить эфир
