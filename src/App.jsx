@@ -78,8 +78,8 @@ const PROFILE_THUMB_GRADIENTS = [
 
 const quickProfileCard = {
   initials: "DS",
-  name: "DimaStroy",
-  username: "@dimastroy",
+  name: "TOLYANYCH",
+  username: "@tolyanych",
   followers: "48.2K",
   likes: "1.2M",
   views: "12.4K"
@@ -1402,7 +1402,7 @@ const authorRight = { display: "flex", alignItems: "flex-start", gap: 8, flexShr
 const rightToolsColumn = { display: "flex", flexDirection: "column", alignItems: "center", gap: 8 };
 const clearIconBtn = { background: "none", border: "none", padding: 0, cursor: "pointer" };
 const clearMetaBtn = { background: "none", border: "none", padding: 0, textAlign: "left", cursor: "pointer" };
-const authorAvatar = { width: 28, height: 28, borderRadius: "50%", backgroundImage: "url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&auto=format&fit=crop')", backgroundSize: "cover", backgroundPosition: "center", flexShrink: 0 };
+const authorAvatar = { width: 28, height: 28, borderRadius: "50%", backgroundImage: "url('/avatar.jpg')", backgroundSize: "cover", backgroundPosition: "center" };
 const authorMeta = { display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", minWidth: 0, marginLeft: 0 };
 const authorName = { color: "white", fontSize: 11, fontWeight: 700, lineHeight: 1, whiteSpace: "nowrap", margin: 0, padding: 0 };
 const authorStats = { marginTop: 2, display: "flex", alignItems: "center", gap: 4, color: "rgba(255,255,255,0.9)", fontSize: 9, fontWeight: 600, lineHeight: 1 };
