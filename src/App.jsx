@@ -1843,8 +1843,22 @@ const profileHeader = { padding: "16px", display: "flex", justifyContent: "space
 const profileHeaderTitle = { fontSize: 18, fontWeight: 700 };
 const profileHeaderBtn = { background: "rgba(255,255,255,0.1)", border: "none", width: 36, height: 36, borderRadius: "50%", color: "white", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" };
 const profileBody = { padding: "10px 16px 60px", overflowY: "auto", flex: 1 };
-const profileAvatarLargeWrap = { position: "relative", width: 96, height: 96, margin: "0 auto" };
-const profileAvatarLarge = { width: "100%", height: "100%", borderRadius: "50%", backgroundImage: "url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop')", backgroundSize: "cover" };
+const profileAvatarLargeWrap = {
+  position: "relative",
+  width: 96,
+  height: 96,
+  margin: "0 auto",
+  marginTop: 1   // или 0 / -10 подгони под глаз
+};
+const profileAvatarLarge = {
+  width: "100%",
+  height: "100%",
+  borderRadius: "50%",
+  backgroundImage: "url(...)",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat"
+};
 const profileContactAvatarLarge = {
   width: "100%",
   height: "100%",
