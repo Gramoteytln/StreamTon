@@ -584,34 +584,40 @@ const handleMarkThreadRead = (threadId) => {
 
   if (tg) {
     tg.ready();
-    tg.expand();
 
-    if (tg.requestFullscreen) {
-      tg.requestFullscreen();
-    }
+    setTimeout(() => {
+      tg.expand();
 
-    if (tg.disableVerticalSwipes) {
-      tg.disableVerticalSwipes();
-    }
+      if (typeof tg.requestFullscreen === "function") {
+        tg.requestFullscreen();
+      }
+
+      if (typeof tg.disableVerticalSwipes === "function") {
+        tg.disableVerticalSwipes();
+      }
+    }, 500);
   }
 
   let currentStream;
 
   navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        currentStream = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.play().catch(console.error);
-        }
-      })
-      .catch(console.error);
+    .getUserMedia({ video: true, audio: true })
+    .then((stream) => {
+      currentStream = stream;
 
-    return () => {
-      if (currentStream) currentStream.getTracks().forEach((t) => t.stop());
-    };
-  }, []);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play().catch(console.error);
+      }
+    })
+    .catch(console.error);
+
+  return () => {
+    if (currentStream) {
+      currentStream.getTracks().forEach((track) => track.stop());
+    }
+  };
+}, []);
 
   useEffect(() => {
     if (isJoined && screen === "home") {
