@@ -91,7 +91,7 @@ const streamerProfile = {
   following: "128",
   followers: "12.4K",
   likes: "245.6K",
-  bio: "Стримлю игры и общаюсь с вами 💜\nПодписывайся!"
+  bio: "ЗВЕЗДНЫЙ СТРИМЕР!🔥"
 };
 
 const MESSAGE_THREADS = [
@@ -1091,11 +1091,16 @@ const renderMessagesScreen = () => (
         <button style={profileHeaderBtn} onClick={handleOpenSettings}><FaCog /></button>
       </div>
       <div style={profileBody}>
-        <div style={profileAvatarLargeWrap}>
-          <div style={profileAvatarLarge} />
-        </div>
-        <div style={profileName}>{streamerProfile.name}</div>
-        <div style={profileUsername}>{streamerProfile.username}</div>
+       <div style={profileAvatarLargeWrap}>
+  <div
+    style={{
+      ...profileAvatarLarge,
+      backgroundImage: streamAvatar ? `url(${streamAvatar})` : profileAvatarLarge.backgroundImage
+    }}
+  />
+</div>
+<div style={profileName}>{streamName || streamerProfile.name}</div>
+<div style={profileUsername}>{streamNickname || streamerProfile.username}</div>
         <div style={profileStatsRow}>
           <div style={profileStatBlock}><div style={profileStatValue}>{streamerProfile.following}</div><div style={profileStatLabel}>Подписки</div></div>
           <div style={profileStatBlock}><div style={profileStatValue}>{streamerProfile.followers}</div><div style={profileStatLabel}>Подписчики</div></div>
@@ -1375,8 +1380,18 @@ const handleStartStream = (e) => {
                   <div style={centerOverlay} onClick={() => setIsProfileCardOpen(false)} />
                   <div style={profileCardCentered} onClick={(e) => e.stopPropagation()}>
                     <button style={profileCardCloseCentered} onClick={() => setIsProfileCardOpen(false)}><FaTimes /></button>
-                    <div style={{ display: "flex", justifyContent: "center", marginTop: 10 }}>
-                    <div style={profileCardAvatarBig}>{quickProfileCard.initials}</div></div>
+                   <div style={{ display: "flex", justifyContent: "center", marginTop: 10 }}>
+                  <div
+    style={{
+      ...profileCardAvatarBig,
+      backgroundImage: streamAvatar ? `url(${streamAvatar})` : undefined,
+      backgroundSize: "cover",
+      backgroundPosition: "center"
+    }}
+  >
+    {!streamAvatar && "DS"}
+                              </div>
+                        </div>
                     <div style={profileCardNameBig}>{streamName}</div>
                     <div style={profileCardUsernameBig}>{streamNickname}</div>
                     <div style={profileCardLivePill}><FaCircle style={{ fontSize: 6, color: "#ff4d6d" }} /> Сейчас в эфире</div>
