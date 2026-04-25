@@ -1396,7 +1396,7 @@ const sharedNavBtn = { background: "transparent", border: "none", color: "rgba(2
 const sharedNavBtnActive = { color: "#ffffff" };
 const sharedPlusBtn = { width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center", background: ACCENT, border: "none", borderRadius: 9, color: "white", fontSize: 15, boxShadow: "0 4px 14px rgba(124, 92, 255, 0.28)", cursor: "pointer" };
 
-const liveHeader = { position: "absolute", top: 70, left: 12, right: 2, zIndex: 6 };const authorBar = { display: "flex", alignItems: "flex-start", justifyContent: "space-between", width: "100%", minHeight: 42, padding: "4px 6px", boxSizing: "border-box", background: "transparent" };
+const liveHeader = { position: "absolute", top: 90, left: 12, right: 2, zIndex: 6 };const authorBar = { display: "flex", alignItems: "flex-start", justifyContent: "space-between", width: "100%", minHeight: 42, padding: "4px 6px", boxSizing: "border-box", background: "transparent" };
 const authorLeft = { display: "flex", alignItems: "center", gap: 6, minWidth: 0 };
 const authorRight = { display: "flex", alignItems: "flex-start", gap: 8, flexShrink: 0 };
 const rightToolsColumn = { display: "flex", flexDirection: "column", alignItems: "center", gap: 8 };
