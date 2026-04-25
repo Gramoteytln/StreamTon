@@ -1188,7 +1188,7 @@ const renderMessagesScreen = () => (
                     <button style={clearIconBtn} onClick={handleOpenProfileCard}><div style={authorAvatar} /></button>
                     <button style={clearMetaBtn} onClick={handleOpenProfileCard}>
                       <div style={authorMeta}>
-                        <div style={authorName}>DimaStroy</div>
+                        <div style={authorName}>TOLYANYCH</div>
                         <div style={authorStats}><FaHeart style={{ fontSize: 9 }} /><span>{formatLikes(displayLikes)}</span></div>
                       </div>
                     </button>
